@@ -288,7 +288,12 @@ static void bitmapClear(uint8_t kc) {
 
 static void holdKey(uint8_t kc)    { if (!kc) return; bitmapSet(kc);   sendHIDReport(); }
 static void releaseKey(uint8_t kc) { if (!kc) return; bitmapClear(kc); sendHIDReport(); }
-static void releaseAllKeys()       { memset(&nkroReport,0,sizeof(nkroReport)); sendHIDReport(); }
+static void releaseAllKeys() {
+  memset(&nkroReport, 0, sizeof(nkroReport));
+  uint32_t t = millis();
+  while (!usb_hid.ready() && millis() - t < 20) yield();
+  sendHIDReport();
+}
 static void holdSpace()            { bitmapSet(HID_KEY_SPACE);   sendHIDReport(); }
 static void releaseSpace()         { bitmapClear(HID_KEY_SPACE); sendHIDReport(); }
 
