@@ -581,8 +581,9 @@ void setup() {
 
   TinyUSBDevice.setProductDescriptor(USB_PRODUCT_NAME);
   TinyUSBDevice.setManufacturerDescriptor(USB_VENDOR_NAME);
-  TinyUSBDevice.setID(USB_VENDOR_ID, USB_PRODUCT_ID); 
+  TinyUSBDevice.setID(USB_VENDOR_ID, USB_PRODUCT_ID);
 
+  usb_hid.setPollInterval(1);
   usb_hid.begin();
   usb_midi.begin();
 
