@@ -272,30 +272,34 @@ static void uartInit() {
 // 8. NKRO HID key state
 // ─────────────────────────────────────────────────────────────────────────────
 
+static bool reportDirty = false;
+
 static void sendHIDReport() {
   if (!usb_hid.ready()) return;
   usb_hid.sendReport(REPORT_ID_NKRO, &nkroReport, sizeof(nkroReport));
+  reportDirty = false;
 }
 
 static void bitmapSet(uint8_t kc) {
-  if (kc >= 224 && kc <= 231)  nkroReport.modifier       |=  (1 << (kc - 224));
+  if (kc >= 224 && kc <= 231)  nkroReport.modifier        |=  (1 << (kc - 224));
   else if (kc > 0 && kc < 128) nkroReport.bitmap[kc >> 3] |=  (1 << (kc & 7));
 }
 static void bitmapClear(uint8_t kc) {
-  if (kc >= 224 && kc <= 231)  nkroReport.modifier       &= ~(1 << (kc - 224));
+  if (kc >= 224 && kc <= 231)  nkroReport.modifier        &= ~(1 << (kc - 224));
   else if (kc > 0 && kc < 128) nkroReport.bitmap[kc >> 3] &= ~(1 << (kc & 7));
 }
 
-static void holdKey(uint8_t kc)    { if (!kc) return; bitmapSet(kc);   sendHIDReport(); }
-static void releaseKey(uint8_t kc) { if (!kc) return; bitmapClear(kc); sendHIDReport(); }
+static void holdKey(uint8_t kc)    { if (!kc) return; bitmapSet(kc);   reportDirty = true; }
+static void releaseKey(uint8_t kc) { if (!kc) return; bitmapClear(kc); reportDirty = true; }
 static void releaseAllKeys() {
   memset(&nkroReport, 0, sizeof(nkroReport));
+  reportDirty = true;
   uint32_t t = millis();
   while (!usb_hid.ready() && millis() - t < 20) yield();
   sendHIDReport();
 }
-static void holdSpace()            { bitmapSet(HID_KEY_SPACE);   sendHIDReport(); }
-static void releaseSpace()         { bitmapClear(HID_KEY_SPACE); sendHIDReport(); }
+static void holdSpace()            { bitmapSet(HID_KEY_SPACE);   reportDirty = true; }
+static void releaseSpace()         { bitmapClear(HID_KEY_SPACE); reportDirty = true; }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 9. LED  — animStart(Mode) now safe: Mode declared at step 3
@@ -611,6 +615,7 @@ void loop() {
     hidByte(b);
     ledMidiActivity(b);
   }
+  if (reportDirty) sendHIDReport();
   ringDrain();
   btnUpdate();
   animUpdate();
