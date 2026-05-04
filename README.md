@@ -1,25 +1,42 @@
 # Musician MIDI Pico Translator
 
-Plug-and-play MIDI to USB translator interface for the [Musician MIDI](https://github.com/LenweSaralonde/MusicianMIDI) World of Warcraft add-on, based on a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/).
+DIY plug and play MIDI to USB translator interface for the [Musician MIDI](https://github.com/LenweSaralonde/MusicianMIDI) World of Warcraft add-on, based on a [Raspberry Pi Pico](https://www.raspberrypi.com/products/raspberry-pi-pico/).
 
-![Musician MIDI Pico Translator](img/raspberry-pi-pico-midi-to-usb.jpg)
+![Musician MIDI Pico Translator](img/musician-midi-pico-translator.png)
+
+## Table of contents
+
+* [Specifications and features](#specifications)
+* [How to use](#how-to-use)
+* [Schematic](#schematic)
+* [How to build and parts list](#how-to-build)
+* [How to flash the Raspberry Pi Pico](#how-to-flash-the-raspberry-pi-pico)
+  * [1. Download and install Arduino IDE](#1-download-and-install-arduino-ide)
+  * [2. Add the Raspberry Pi Pico board package](#2-add-the-raspberry-pi-pico-board-package)
+  * [3. Select the correct board and settings](#3-select-the-correct-board-and-settings)
+  * [4. Open the sketch](#4-open-the-sketch)
+  * [5. Connect the Pico in bootloader mode](#5-connect-the-pico-in-bootloader-mode)
+  * [6. Upload the sketch](#6-upload-the-sketch)
+  * [Update the software](#update-the-software)
+
+## Specifications
 
 The device consists of:
 * A HID keyboard that translates incoming MIDI messages into keystrokes for the [Musician MIDI](https://github.com/LenweSaralonde/MusicianMIDI) add-on running in World of Warcraft.
 * A standard MIDI to USB interface that can be used simultaneously with any software synthesizer or music production software to mitigate the audio latency problem in World of Warcraft.
 
 ### Features
-* Compatible with Mac and PC.
-* Plug-and-play (no driver required).
+* Compatible with all operating systems (Windows, macOS, Linux…).
+* Plug and play (no driver required).
 * Supports the QWERTY, AZERTY and QWERTZ keyboard layouts.
 * N-Key rollover (all keys can play at the same time).
 * Minimalistic design for low-cost and easy building using basic off-the-shelf components and tools.
 
 ## How to use
 
-Connect the DIN jack to your controller MIDI OUT and the USB to your computer.
+Connect the 5-pin DIN jack to your controller MIDI OUT and the USB to your computer.
 
-Press the **onboard button** to choose the desired keyboard mode. The onboard LED will then blink accordingly to the chosen mode:
+Press the **onboard button** to choose the desired keyboard mode. The onboard LED will then blink according to the chosen mode:
 1. **QWERTY** &ndash; 1 long and 1 short blinks
 2. **AZERTY** &ndash; 1 long and 2 short blinks
 3. **QWERTZ** &ndash; 1 long and 3 short blinks
@@ -29,24 +46,24 @@ The selected mode is saved when the device is disconnected. The onboard LED indi
 
 ## Schematic
 
-The circuit consists of a minimalistic MIDI IN shield for the Raspberry Pi Pico.
+The circuit is a minimalistic MIDI IN shield for the Raspberry Pi Pico.
 
 ![Raspberry Pi Pico MIDI shield](img/schematic.png)
 
-It's built around the 4N35 optocoupler and it's designed accordingly to the MIDI specifications to limit potential damage to your gear in case of incorrect connection.
+It's built around the 4N35 optocoupler and is designed according to the MIDI specifications to limit potential damage to your gear in case of incorrect connection.
 
 Any other MIDI shield design works, as long as it's compatible with the Raspberry Pi Pico and routes the MIDI IN to the Pico `UART0 RX` pin (2).
 
-## Build
+## How to build
 
-The easiest solution is to build the circuit on a perfboard.
+The simplest solution is to build the circuit on a perfboard.
 
 The components are placed under the Raspberry Pi to reduce the device footprint.
 
 ![Raspberry Pi Pico MIDI shield zero PCB layout](img/raspberry-pi-pico-midi-shield-zero-pcb-layout.png)
 
-Components list:
-* 1x Raspberry Pi Pico
+Parts list:
+* 1x Raspberry Pi Pico H (with pins)
 * 1x 67 x 21 mm (26 x 8 holes) Single-sided zero PCB / perfboard
 * 2x 20-way header sockets
 * 1x 180° DIN socket
@@ -56,16 +73,16 @@ Components list:
 * 1x 470 Ω resistor
 * Wire
 
-The DIN socket legs may be too large to fit in the perfboard holes, don't hesitate to enlarge the holes with a mini drill.
+The DIN socket legs may be too large to fit in the perfboard holes; don't hesitate to enlarge the holes with a mini drill.
 
-Insert the Raspberry Pi Pico with the USB port to the opposite direction of the DIN socket.
+The diode is mounted vertically with its ring (negative) side on top.
 
-Once completed, glue the circuit on a piece of wood or plastic to prevent the solder points to scratch your equipment.
+Insert the Raspberry Pi Pico with the USB port in the opposite direction of the DIN socket.
 
-## Alternative hardware solutions
+Once completed, glue the circuit on a piece of wood or plastic like an offcut of cable trunking to prevent the solder points from scratching your equipment. Add rubber feet to prevent it from moving.
 
-If you don't want to build the MIDI shield yourself, you can buy some that are already assembled, tested and ready to be flashed:
-* [Midimuso Pico MIDI full kit with Raspberry Pi Pico](https://midimuso.co.uk/index.php/product/pico-midi-built-including-pi-pico-board/) — £35
+> 💡 If you don't want to build the MIDI shield yourself, you can buy some that are already assembled, tested and ready to be flashed:
+> * [Midimuso Pico MIDI full kit with Raspberry Pi Pico](https://midimuso.co.uk/index.php/product/pico-midi-built-including-pi-pico-board/) — £35
 
 ## How to flash the Raspberry Pi Pico
 
@@ -91,15 +108,15 @@ Arduino IDE doesn't know about the Pico out of the box. You need to tell it wher
    ```
 5. Click **OK** to close the text box, then **OK** again to close Preferences.
 6. Go to **Tools → Board → Boards Manager**.
-7. In the search box type `RP2040`.
+7. In the search box, type `RP2040`.
 8. Find **"Raspberry Pi Pico/RP2040/RP2350"** by **Earle F. Philhower, III** — ⚠️ make sure it says his name, not "Arduino".
 9. Click **Install** — this downloads about 250 MB and takes a few minutes.
 10. When it finishes, close the Boards Manager.
 
 ### 3. Select the correct board and settings
 
-1. Go to **Tools → Board → Raspberry Pi Pico/RP2040/RP2350** then select **Raspberry Pi Pico** — it should be the first option.
-2. Go to **Tools**, find the option that begins with **USB Stack:** then choose **Adafruit TinyUSB**.
+1. Go to **Tools → Board → Raspberry Pi Pico/RP2040/RP2350**, then select **Raspberry Pi Pico** — it should be the first option.
+2. Go to **Tools**, find the option that begins with **USB Stack:**, then choose **Adafruit TinyUSB**.
 
 > ⚠️ **The USB Stack setting is critical.** If you don't see the USB Stack option in the Tools menu, you selected the wrong board package (Arduino's instead of Earle's). Go back to Step 2 and make sure you installed the correct one.
 
@@ -122,11 +139,11 @@ The Pico now appears as a USB drive called **RPI-RP2** on your desktop (like a f
 ### 6. Upload the sketch
 
 1. In Arduino IDE, go to **Tools → Port** and select the port that mentions **UF2 Board** or **RPI-RP2**.
-2. Click the **Upload button** — the right-pointing arrow `→` in the top-left toolbar
+2. Click the **Upload button** — the right-pointing arrow `→` in the top-left toolbar.
 3. Arduino IDE will:
    - Compile the code (bottom panel shows progress — takes 30–60 seconds the first time).
    - Copy the compiled file onto the Pico automatically.
-4. The RPI-RP2 drive disappears from your desktop — **this is normal and means it worked**. On macOS, you may get a warning notification that says the drive was not ejected properly, you can safely dismiss this warning.
+4. The RPI-RP2 drive disappears from your desktop — **this is normal and means it worked**. On macOS, you may get a warning notification that says the drive was not ejected properly — you can safely dismiss it.
 5. Wait for the **Done uploading** message in Arduino IDE.
 6. The translator is now operational.
 
@@ -134,4 +151,4 @@ The Pico now appears as a USB drive called **RPI-RP2** on your desktop (like a f
 
 ### Update the software
 
-To update the Raspberry Pi Pico software, just launch Arduino IDE then repeat from step 3.
+To update the Raspberry Pi Pico software, just launch Arduino IDE, then repeat from step 3.
